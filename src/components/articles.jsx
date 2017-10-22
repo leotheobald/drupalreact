@@ -14,6 +14,7 @@ class Articles extends Component {
       article_title: '',
       article_body: '',
       article_image: '',
+      article_video: '',
       keyword: ''
     };
 
@@ -32,7 +33,7 @@ class Articles extends Component {
   }
 
   fetchArticle(nid) {
-    var log = require('console-log-level')({ level: 'info' });
+    //var log = require('console-log-level')({ level: 'info' });
     var id;
     if (nid !== undefined) {
       id = nid;
@@ -46,16 +47,18 @@ class Articles extends Component {
     const self = this;
     this.serverRequest = axios.get('http://drupal8test.local/node/' + id + '?_format=json')
     .then(function(result){
-      var body = result.data.body["0"].value,
-        image = result.data.field_image["0"];
+      var body = result.data.body["0"].value;
+      var image = result.data.field_image["0"] ? result.data.field_image["0"] : {};
+          //video = result.data.field_video["0"];
 
       self.setState({
         article_title: result.data.title["0"].value,
         article_body: body.replace('/sites/default/files', 'http://drupal8test.local/sites/default/files'),
         article_image: image,
       });
+      console.log(image);
+      //log.info('Some data: ', result.data.field_image["0"]);
 
-      log.info('Some data: ', result.data.field_image["0"]);
     })
   }
 
@@ -108,6 +111,7 @@ class Articles extends Component {
               <source srcSet={this.state.article_image.url} media="(min-width: 600px)" />
               <img src={this.state.article_image.url} alt={this.state.article_image.alt} />
             </picture>
+
           </div>
         </div>
       </div>
